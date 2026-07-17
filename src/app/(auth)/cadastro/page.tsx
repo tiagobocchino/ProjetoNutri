@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { Field } from "@/components/ui/field";
+import { traduzErroAuth } from "@/lib/auth-errors";
 
 export default function CadastroPage() {
   const router = useRouter();
@@ -36,7 +37,13 @@ export default function CadastroPage() {
     setCarregando(false);
 
     if (error) {
-      setErro(error.message);
+      setErro(traduzErroAuth(error.message).message);
+      return;
+    }
+    // Supabase (anti-enumeração) retorna um "user" com identities vazio quando o
+    // e-mail JÁ existe. Tratamos como "já cadastrado".
+    if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+      setErro("Este e-mail já possui conta. Faça login.");
       return;
     }
     // Se a confirmação de e-mail estiver desativada, já há sessão → segue para onboarding.

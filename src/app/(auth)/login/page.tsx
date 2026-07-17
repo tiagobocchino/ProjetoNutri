@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { Field } from "@/components/ui/field";
+import { traduzErroAuth } from "@/lib/auth-errors";
 
 export default function LoginPage() {
   return (
@@ -20,21 +21,39 @@ function LoginForm() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState<string | null>(null);
+  const [precisaConfirmar, setPrecisaConfirmar] = useState(false);
+  const [aviso, setAviso] = useState<string | null>(null);
   const [carregando, setCarregando] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setErro(null);
+    setAviso(null);
+    setPrecisaConfirmar(false);
     setCarregando(true);
     const supabase = createClient();
     const { error } = await supabase.auth.signInWithPassword({ email, password: senha });
     setCarregando(false);
     if (error) {
-      setErro("E-mail ou senha inválidos.");
+      const info = traduzErroAuth(error.message);
+      setErro(info.message);
+      setPrecisaConfirmar(!!info.needsConfirmation);
       return;
     }
     router.push(params.get("next") ?? "/dashboard");
     router.refresh();
+  }
+
+  async function reenviarConfirmacao() {
+    if (!email) return;
+    setAviso(null);
+    const supabase = createClient();
+    const { error } = await supabase.auth.resend({ type: "signup", email });
+    setAviso(
+      error
+        ? traduzErroAuth(error.message).message
+        : "Link de confirmação reenviado. Verifique seu e-mail.",
+    );
   }
 
   return (
@@ -61,6 +80,16 @@ function LoginForm() {
           placeholder="••••••••"
         />
         {erro && <p className="text-sm text-[color:var(--color-destructive)]">{erro}</p>}
+        {precisaConfirmar && (
+          <button
+            type="button"
+            onClick={reenviarConfirmacao}
+            className="text-sm font-medium text-[color:var(--color-primary)] hover:underline"
+          >
+            Reenviar e-mail de confirmação
+          </button>
+        )}
+        {aviso && <p className="text-sm text-[color:var(--color-primary)]">{aviso}</p>}
         <button
           type="submit"
           disabled={carregando}
