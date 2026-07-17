@@ -1,26 +1,206 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ─────────────────────────────────────────────────────────────
+   ProjetoNutri — Design System
+   Base visual: NutrimaxLP (Soft Forest & Warm Cream)
+   Efeitos: BocchinoTecConsult (glass, glare, noise)
+   ───────────────────────────────────────────────────────────── */
+
+@theme {
+  /* ─── Cores (HSL) ─── */
+  --color-background: hsl(45 30% 97%);        /* creme quente */
+  --color-foreground: hsl(160 35% 12%);       /* verde floresta profundo */
+
+  --color-card: hsl(0 0% 100%);
+  --color-card-foreground: hsl(160 35% 12%);
+
+  --color-popover: hsl(0 0% 100%);
+  --color-popover-foreground: hsl(160 35% 12%);
+
+  --color-primary: hsl(158 42% 28%);          /* verde floresta */
+  --color-primary-foreground: hsl(0 0% 100%);
+  --color-primary-light: hsl(155 28% 40%);
+  --color-primary-dark: hsl(160 50% 18%);
+
+  --color-secondary: hsl(150 18% 93%);        /* sage claro */
+  --color-secondary-foreground: hsl(160 35% 18%);
+
+  --color-accent: hsl(36 62% 52%);            /* dourado quente */
+  --color-accent-foreground: hsl(0 0% 100%);
+
+  --color-muted: hsl(45 20% 95%);
+  --color-muted-foreground: hsl(155 12% 48%);
+
+  --color-destructive: hsl(0 80% 58%);
+  --color-destructive-foreground: hsl(0 0% 100%);
+
+  --color-success: hsl(150 55% 34%);
+  --color-warning: hsl(36 80% 50%);
+
+  --color-border: hsl(150 14% 88%);
+  --color-input: hsl(150 14% 91%);
+  --color-ring: hsl(158 42% 28%);
+
+  /* ─── Tipografia (variáveis de next/font) ─── */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-playfair), Georgia, serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  /* ─── Forma ─── */
+  --radius: 1rem;
+  --radius-sm: calc(var(--radius) - 0.5rem);
+  --radius-md: calc(var(--radius) - 0.25rem);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 0.5rem);
+
+  /* ─── Sombras esverdeadas ─── */
+  --shadow-sm: 0 1px 2px 0 rgba(22, 51, 38, 0.04);
+  --shadow-card: 0 0 0 1px rgba(22, 51, 38, 0.04), 0 2px 8px rgba(22, 51, 38, 0.06), 0 12px 28px rgba(22, 51, 38, 0.06);
+  --shadow-hover: 0 0 0 1px rgba(22, 51, 38, 0.05), 0 4px 12px rgba(22, 51, 38, 0.1), 0 20px 40px rgba(22, 51, 38, 0.1);
+
+  /* ─── Easing ─── */
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+    line-height: 1.75;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  /* ─── Layout ─── */
+  .section-padding {
+    padding-inline: 1.5rem;
+    padding-block: 6rem;
+  }
+  @media (min-width: 768px) {
+    .section-padding { padding-inline: 3.5rem; }
+  }
+  @media (min-width: 1024px) {
+    .section-padding { padding-inline: 6rem; padding-block: 8rem; }
+  }
+
+  .container-max {
+    max-width: 80rem;
+    margin-inline: auto;
+  }
+
+  /* ─── Rótulo de seção (mono + traço dourado) ─── */
+  .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: 0.9rem;
+  }
+  .section-label::before {
+    content: "";
+    display: block;
+    width: 24px;
+    height: 1px;
+    background-color: var(--color-accent);
+  }
+
+  /* ─── Cards ─── */
+  .card-surface {
+    background-color: var(--color-card);
+    border-radius: 1rem;
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 0.35s var(--ease-smooth), transform 0.35s var(--ease-smooth);
+  }
+  .card-surface:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-3px);
+  }
+
+  /* ─── Gradientes ─── */
+  .text-gradient-green {
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary-light));
+  }
+
+  .bg-hero-pattern {
+    background-color: var(--color-primary-dark);
+    background-image:
+      radial-gradient(ellipse 80% 60% at 60% 40%, hsl(158 42% 28% / 0.55) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 10% 80%, hsl(36 62% 52% / 0.12) 0%, transparent 60%);
+  }
+
+  /* ─── Dados numéricos ─── */
+  .data-number {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ─── Glassmorphism (efeito Bocchino) ─── */
+  .glass-panel {
+    background: color-mix(in srgb, var(--color-card) 70%, transparent);
+    backdrop-filter: blur(20px);
+    border: 1px solid color-mix(in srgb, var(--color-border) 60%, transparent);
+  }
+
+  /* ─── Botão glare (efeito Bocchino) ─── */
+  .btn-relay {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .btn-relay::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      120px circle at var(--mx, 50%) var(--my, 50%),
+      rgba(255, 255, 255, 0.25),
+      transparent 60%
+    );
+    opacity: 0;
+    transition: opacity 0.3s var(--ease-smooth);
+    z-index: -1;
+  }
+  .btn-relay:hover::before {
+    opacity: 1;
+  }
+
+  /* ─── Overlay de ruído (efeito Bocchino) ─── */
+  .noise-overlay::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
 }
