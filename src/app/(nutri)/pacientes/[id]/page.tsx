@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { InviteButton } from "@/components/patients/invite-button";
@@ -13,7 +12,7 @@ const statusLabel: Record<PatientStatus, string> = {
 
 type Endereco = { cep?: string; logradouro?: string; cidade?: string; uf?: string };
 
-export default async function PacienteDetalhePage({
+export default async function PacienteDadosPage({
   params,
 }: {
   params: Promise<{ id: string }>;
@@ -28,26 +27,11 @@ export default async function PacienteDetalhePage({
   const vinculado = !!p.user_id;
 
   return (
-    <div className="max-w-3xl">
-      <Link href="/pacientes" className="text-sm text-[color:var(--color-muted-foreground)] hover:underline">
-        ← Pacientes
-      </Link>
-
-      <div className="mb-6 mt-2 flex items-start justify-between">
-        <div>
-          <h1 className="text-3xl font-semibold">{p.nome}</h1>
-          <p className="mt-1 text-sm text-[color:var(--color-muted-foreground)]">
-            Status: {statusLabel[p.status]}
-            {vinculado && " · conta ativa"}
-          </p>
-        </div>
-        <Link
-          href={`/pacientes/${p.id}/editar`}
-          className="rounded-xl border border-[color:var(--color-border)] px-4 py-2 text-sm font-medium transition hover:bg-[color:var(--color-secondary)]"
-        >
-          Editar
-        </Link>
-      </div>
+    <div>
+      <p className="mb-4 text-sm text-[color:var(--color-muted-foreground)]">
+        Status: {statusLabel[p.status]}
+        {vinculado && " · conta ativa"}
+      </p>
 
       <div className="card-surface space-y-3 p-8">
         <Linha rotulo="E-mail" valor={p.email} />

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { PatientForm } from "@/components/forms/patient-form";
@@ -33,14 +32,8 @@ export default async function EditarPacientePage({
   };
 
   return (
-    <div className="max-w-3xl">
-      <Link href={`/pacientes/${id}`} className="text-sm text-[color:var(--color-muted-foreground)] hover:underline">
-        ← {p.nome}
-      </Link>
-      <h1 className="mb-8 mt-2 text-3xl font-semibold">Editar paciente</h1>
-      <div className="card-surface p-8">
-        <PatientForm patientId={id} defaultValues={defaults} />
-      </div>
+    <div className="card-surface p-8">
+      <PatientForm patientId={id} defaultValues={defaults} />
     </div>
   );
 }
